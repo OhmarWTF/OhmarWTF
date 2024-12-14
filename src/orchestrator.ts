@@ -189,11 +189,14 @@ export class Orchestrator {
     }
 
     // 2. Signals - process events and update signals
+    const trackedTokens = this.perception.getTrackedTokenAddresses();
+
     if (newEvents.length > 0) {
-      const newSignals = this.signals.processEvents(newEvents);
+      const newSignals = this.signals.processEvents(newEvents, trackedTokens);
       newSignals.forEach(signal => log.signal({
         type: signal.type,
         confidence: signal.confidence,
+        strength: signal.strength,
         token: signal.tokenSymbol
       }));
     }

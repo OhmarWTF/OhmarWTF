@@ -125,6 +125,13 @@ export class PerceptionLayer implements IPerceptionLayer {
     await this.saveTrackedTokens();
   }
 
+  /**
+   * Get list of tracked token addresses
+   */
+  getTrackedTokenAddresses(): string[] {
+    return this.solana.getTrackedTokens().map(t => t.address);
+  }
+
   async shutdown(): Promise<void> {
     logger.info('Shutting down perception layer...');
 
