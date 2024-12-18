@@ -72,7 +72,9 @@ export interface Config {
   // Execution
   execution: {
     maxSlippagePct: number;
-    dexProgramId: string;
+    dexProgramId?: string;
+    paperMode: boolean;
+    initialCapital: number;
   };
 
   // Memory
@@ -173,7 +175,9 @@ export function loadConfig(): Config {
 
     execution: {
       maxSlippagePct: getEnvNumber('MAX_SLIPPAGE_PCT', 5),
-      dexProgramId: getEnv('DEX_PROGRAM_ID', '')
+      dexProgramId: process.env.DEX_PROGRAM_ID,
+      paperMode: getEnvBool('PAPER_MODE', true),
+      initialCapital: getEnvNumber('INITIAL_CAPITAL', 10)
     },
 
     memory: {

@@ -30,9 +30,9 @@ export class Orchestrator {
   private memory: MemorySystem;
   private expression: ExpressionLayer;
 
-  // State
-  private positions: Position[] = [];
-  private capital: number = 0;
+  // State (managed by execution layer in paper mode)
+  // private positions: Position[] = [];
+  // private capital: number = 0;
 
   // Timing
   private lastPerceptionPoll: number = 0;
@@ -74,10 +74,12 @@ export class Orchestrator {
     });
 
     this.execution = new ExecutionLayer({
-      walletPrivateKey: config.solana.walletPrivateKey || '',
+      walletPrivateKey: config.solana.walletPrivateKey,
       solanaRpcUrl: config.solana.rpcUrl,
       maxSlippagePct: config.execution.maxSlippagePct,
-      dexProgramId: config.execution.dexProgramId
+      dexProgramId: config.execution.dexProgramId,
+      paperMode: config.execution.paperMode,
+      initialCapital: config.execution.initialCapital
     });
 
     this.memory = new MemorySystem({
@@ -109,9 +111,9 @@ export class Orchestrator {
       await this.expression.initialize();
       await this.memory.load();
 
-      // Get initial capital
-      this.capital = await this.execution.getBalance();
-      logger.info(`Initial capital: ${this.capital} SOL`);
+      // Get initial capital/balance
+      const balance = await this.execution.getBalance();
+      logger.info(`Initial capital: ${balance} SOL`);
 
       logger.info('Agent initialized successfully');
     } catch (error) {
@@ -214,7 +216,8 @@ export class Orchestrator {
     });
 
     // 4. Decision - form intent
-    const intent = this.decision.decide(activeSignals, agentState, this.positions);
+    const positions = this.execution.getPositions();
+    const intent = this.decision.decide(activeSignals, agentState, positions);
 
     if (intent) {
       log.intent({
@@ -224,7 +227,8 @@ export class Orchestrator {
       });
 
       // 5. Risk - check intent
-      const riskCheck = this.risk.checkIntent(intent, this.positions, this.capital);
+      const capital = await this.execution.getBalance();
+      const riskCheck = this.risk.checkIntent(intent, positions, capital);
 
       if (riskCheck.approved) {
         intent.riskApproved = true;
