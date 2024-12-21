@@ -240,10 +240,13 @@ export class Orchestrator {
 
         // 6. Execution - execute if not WAIT or WATCH
         if (intent.type !== 'wait' && intent.type !== 'watch') {
+          const recentMemories = this.memory.getShortTerm();
+
           const tweet = this.expression.compose(TweetMode.PRE_TRADE, {
             state: agentState,
             intent,
-            signals: activeSignals
+            signals: activeSignals,
+            recentMemories
           });
 
           if (tweet) {
@@ -262,7 +265,8 @@ export class Orchestrator {
           // Post trade tweet
           const postTradeTweet = this.expression.compose(TweetMode.POST_MORTEM, {
             state: this.state.getState(),
-            trade: tradeResult
+            trade: tradeResult,
+            recentMemories
           });
 
           if (postTradeTweet) {
@@ -284,9 +288,12 @@ export class Orchestrator {
 
     // 8. Ambient expression - occasionally tweet observations
     if (Math.random() < 0.05 && this.expression.canTweet()) { // 5% chance per tick
+      const recentMemories = this.memory.getShortTerm();
+
       const ambientTweet = this.expression.compose(TweetMode.AMBIENT, {
         state: agentState,
-        signals: activeSignals
+        signals: activeSignals,
+        recentMemories
       });
 
       if (ambientTweet) {

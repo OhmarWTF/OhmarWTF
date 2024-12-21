@@ -4,6 +4,7 @@
  */
 
 import { AgentState, Intent, TradeResult, Signal, MemoryEntry } from '../../types/index.js';
+import { generateTweet, addContinuityReference, isRepetitive } from './narrative.js';
 
 export interface ExpressionConfig {
   twitterEnabled: boolean;
@@ -65,6 +66,7 @@ export class ExpressionLayer implements IExpressionLayer {
   private lastTweetTime: number = 0;
   private dailyTweetCount: number = 0;
   private lastResetDay: number = 0;
+  private recentTweets: string[] = [];
 
   constructor(config: ExpressionConfig) {
     this.config = config;
@@ -87,31 +89,34 @@ export class ExpressionLayer implements IExpressionLayer {
       trade?: TradeResult;
       signals?: Signal[];
       memory?: MemoryEntry;
+      recentMemories?: MemoryEntry[];
     }
   ): ITweetContent | null {
     if (!this.canTweet()) {
       return null;
     }
 
-    // TODO: Generate tweet based on mode and context
-    // TODO: Reference memory for continuity
-    // TODO: Apply anti-repetition filters
-    // TODO: Match tone to agent mood
+    // Generate base tweet
+    let text = generateTweet(mode, {
+      state: context.state || { primaryMood: 'neutral' } as AgentState,
+      intent: context.intent,
+      trade: context.trade,
+      signals: context.signals,
+      recentMemories: context.recentMemories
+    });
 
-    let text = '';
+    if (!text) {
+      return null;
+    }
 
-    switch (mode) {
-      case TweetMode.AMBIENT:
-        text = 'observing';
-        break;
-      case TweetMode.PRE_TRADE:
-        text = `considering ${context.intent?.tokenSymbol || 'something'}`;
-        break;
-      case TweetMode.POST_MORTEM:
-        text = 'reflecting on that trade';
-        break;
-      default:
-        return null;
+    // Add continuity reference occasionally
+    if (context.recentMemories && Math.random() < 0.2) {
+      text = addContinuityReference(text, context.recentMemories);
+    }
+
+    // Check for repetition
+    if (isRepetitive(text, this.recentTweets)) {
+      return null;
     }
 
     return { text, mode, context };
@@ -121,11 +126,19 @@ export class ExpressionLayer implements IExpressionLayer {
     if (!this.config.twitterEnabled) {
       console.log(`[TWEET ${content.mode}] ${content.text}`);
       this.updateRateLimit();
+      this.recentTweets.push(content.text);
+      if (this.recentTweets.length > 20) {
+        this.recentTweets.shift();
+      }
       return true;
     }
 
     // TODO: Post to Twitter API
     this.updateRateLimit();
+    this.recentTweets.push(content.text);
+    if (this.recentTweets.length > 20) {
+      this.recentTweets.shift();
+    }
     return true;
   }
 
