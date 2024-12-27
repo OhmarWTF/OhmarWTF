@@ -18,6 +18,7 @@ export enum OperationalMode {
   ACTIVE = 'active',
   OBSERVING = 'observing',
   SAFE_MODE = 'safe_mode',
+  PAUSED = 'paused',
   FROZEN = 'frozen'
 }
 

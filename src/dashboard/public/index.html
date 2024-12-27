@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ohmarwtf - Operator Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>ohmarwtf</h1>
+      <div class="status">
+        <span id="connectionStatus" class="status-badge disconnected">Disconnected</span>
+        <span id="tradingStatus" class="status-badge"></span>
+        <span id="safeModeStatus" class="status-badge"></span>
+      </div>
+    </header>
+
+    <div class="dashboard">
+      <!-- Agent State -->
+      <section class="card">
+        <h2>Agent State</h2>
+        <div class="state-grid">
+          <div class="state-item">
+            <label>Mood</label>
+            <span id="mood" class="value">-</span>
+          </div>
+          <div class="state-item">
+            <label>Confidence</label>
+            <span id="confidence" class="value">-</span>
+          </div>
+          <div class="state-item">
+            <label>Risk Appetite</label>
+            <span id="riskAppetite" class="value">-</span>
+          </div>
+          <div class="state-item">
+            <label>Suspicion</label>
+            <span id="suspicion" class="value">-</span>
+          </div>
+          <div class="state-item">
+            <label>Regret</label>
+            <span id="regret" class="value">-</span>
+          </div>
+          <div class="state-item">
+            <label>Fatigue</label>
+            <span id="fatigue" class="value">-</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Capital & PnL -->
+      <section class="card">
+        <h2>Capital & PnL</h2>
+        <div class="pnl-grid">
+          <div class="pnl-item">
+            <label>Current Capital</label>
+            <span id="capital" class="value large">-</span>
+          </div>
+          <div class="pnl-item">
+            <label>Total PnL</label>
+            <span id="totalPnL" class="value large">-</span>
+          </div>
+          <div class="pnl-item">
+            <label>Daily PnL</label>
+            <span id="dailyPnL" class="value large">-</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Controls -->
+      <section class="card">
+        <h2>Controls</h2>
+        <div class="controls">
+          <button id="pauseBtn" class="btn btn-warning">Pause Trading</button>
+          <button id="resumeBtn" class="btn btn-success" disabled>Resume Trading</button>
+          <button id="safeModeBtn" class="btn btn-danger">Toggle Safe Mode</button>
+        </div>
+      </section>
+
+      <!-- Positions -->
+      <section class="card full-width">
+        <h2>Open Positions</h2>
+        <div id="positionsContainer">
+          <table id="positionsTable">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Direction</th>
+                <th>Entry Price</th>
+                <th>Current Price</th>
+                <th>Size</th>
+                <th>PnL</th>
+                <th>Age</th>
+              </tr>
+            </thead>
+            <tbody id="positionsBody">
+              <tr>
+                <td colspan="7" class="empty">No open positions</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Signals -->
+      <section class="card full-width">
+        <h2>Active Signals</h2>
+        <div id="signalsContainer">
+          <table id="signalsTable">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Token</th>
+                <th>Confidence</th>
+                <th>Strength</th>
+                <th>Urgency</th>
+                <th>Age</th>
+              </tr>
+            </thead>
+            <tbody id="signalsBody">
+              <tr>
+                <td colspan="6" class="empty">No active signals</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Recent Trades -->
+      <section class="card full-width">
+        <h2>Recent Trades</h2>
+        <div id="tradesContainer">
+          <table id="tradesTable">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Symbol</th>
+                <th>Action</th>
+                <th>Status</th>
+                <th>Price</th>
+                <th>Size</th>
+                <th>PnL</th>
+              </tr>
+            </thead>
+            <tbody id="tradesBody">
+              <tr>
+                <td colspan="7" class="empty">No recent trades</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Recent Events -->
+      <section class="card full-width">
+        <h2>Recent Events</h2>
+        <div id="eventsContainer">
+          <div id="eventsList" class="events-list">
+            <p class="empty">No recent events</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Memory -->
+      <section class="card full-width">
+        <h2>Memory</h2>
+        <div id="memoryContainer">
+          <div id="memoryList" class="memory-list">
+            <p class="empty">No memories</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

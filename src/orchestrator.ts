@@ -13,6 +13,7 @@ import { RiskGuardrails } from './modules/risk/index.js';
 import { ExecutionLayer } from './modules/execution/index.js';
 import { MemorySystem } from './modules/memory/index.js';
 import { ExpressionLayer, TweetMode } from './modules/expression/index.js';
+import { DashboardServer } from './dashboard/server.js';
 import { Event, Position, OperationalMode } from './types/index.js';
 
 export class Orchestrator {
@@ -29,6 +30,7 @@ export class Orchestrator {
   private execution: ExecutionLayer;
   private memory: MemorySystem;
   private expression: ExpressionLayer;
+  private dashboard: DashboardServer;
 
   // State (managed by execution layer in paper mode)
   // private positions: Position[] = [];
@@ -97,6 +99,18 @@ export class Orchestrator {
       minTweetIntervalMs: config.expression.minTweetIntervalMs,
       maxDailyTweets: config.expression.maxDailyTweets
     });
+
+    this.dashboard = new DashboardServer({
+      enabled: config.dashboard.enabled,
+      port: config.dashboard.port
+    });
+
+    // Set dashboard control callbacks
+    this.dashboard.setControlCallbacks({
+      onPause: () => this.pauseTrading(),
+      onResume: () => this.resumeTrading(),
+      onSafeMode: (enabled: boolean) => this.setSafeMode(enabled)
+    });
   }
 
   /**
@@ -110,6 +124,7 @@ export class Orchestrator {
       await this.execution.initialize();
       await this.expression.initialize();
       await this.memory.load();
+      await this.dashboard.start();
 
       // Get initial capital/balance
       const balance = await this.execution.getBalance();
@@ -166,6 +181,7 @@ export class Orchestrator {
     // Cleanup
     await this.perception.shutdown();
     await this.execution.shutdown();
+    await this.dashboard.stop();
 
     logger.info('Agent stopped');
   }
@@ -306,9 +322,67 @@ export class Orchestrator {
       await this.memory.persist();
       this.lastStateSave = now;
     }
+
+    // 10. Update dashboard
+    await this.updateDashboard();
   }
 
   private sleep(ms: number): Promise<void> {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  /**
+   * Control methods for dashboard
+   */
+  private pauseTrading(): void {
+    logger.warn('Trading paused by operator');
+    this.state.setMode(OperationalMode.PAUSED);
+  }
+
+  private resumeTrading(): void {
+    logger.info('Trading resumed by operator');
+    this.state.setMode(OperationalMode.OBSERVING);
+  }
+
+  private setSafeMode(enabled: boolean): void {
+    logger.warn(`Safe mode ${enabled ? 'enabled' : 'disabled'} by operator`);
+    if (enabled) {
+      this.state.setMode(OperationalMode.SAFE_MODE);
+    } else {
+      this.state.setMode(OperationalMode.OBSERVING);
+    }
+  }
+
+  /**
+   * Update dashboard with current data
+   */
+  private async updateDashboard(): Promise<void> {
+    const positions = this.execution.getPositions();
+    const capital = await this.execution.getBalance();
+    const agentState = this.state.getState();
+    const activeSignals = this.signals.updateSignals();
+    const recentMemories = this.memory.getShortTerm();
+
+    // Calculate PnL from positions
+    const totalPnL = positions.reduce((sum, pos) => sum + (pos.unrealizedPnL || 0), 0);
+
+    // Calculate daily PnL from memories with trade type
+    const dailyPnL = recentMemories
+      .filter(m => m.type === 'trade' && Date.now() - m.timestamp < 86400000)
+      .reduce((sum, m) => sum + (m.pnl || 0), 0);
+
+    this.dashboard.updateData({
+      state: agentState,
+      positions,
+      recentTrades: [], // TODO: Implement trade history tracking
+      signals: activeSignals,
+      recentEvents: [], // TODO: Add recent events tracking to perception layer
+      recentMemories,
+      capital,
+      totalPnL,
+      dailyPnL,
+      safeMode: agentState.mode === OperationalMode.SAFE_MODE,
+      tradingPaused: agentState.mode === OperationalMode.PAUSED
+    });
   }
 }

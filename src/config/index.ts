@@ -89,6 +89,12 @@ export interface Config {
     minTweetIntervalMs: number;
     maxDailyTweets: number;
   };
+
+  // Dashboard
+  dashboard: {
+    enabled: boolean;
+    port: number;
+  };
 }
 
 function getEnv(key: string, defaultValue?: string): string {
@@ -189,6 +195,11 @@ export function loadConfig(): Config {
     expression: {
       minTweetIntervalMs: getEnvNumber('MIN_TWEET_INTERVAL_MS', 1800000), // 30 min
       maxDailyTweets: getEnvNumber('MAX_DAILY_TWEETS', 20)
+    },
+
+    dashboard: {
+      enabled: getEnvBool('DASHBOARD_ENABLED', true),
+      port: getEnvNumber('DASHBOARD_PORT', 3000)
     }
   };
 }
