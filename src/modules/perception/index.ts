@@ -206,12 +206,16 @@ export class PerceptionLayer implements IPerceptionLayer {
    * Add some default tokens for initial testing
    */
   private async addDefaultTokens(): Promise<void> {
-    // Add a few well-known Solana tokens for testing
+    // Add a diverse set of Solana tokens for learning
     const defaultTokens = [
-      // BONK - popular meme coin
+      // Major meme coins
       { address: 'DezXAZ8z7PnrnRJjz3wXBoRgixCa6xjnB7YaB1pPB263', symbol: 'BONK' },
-      // WIF - dogwifhat
-      { address: 'EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm', symbol: 'WIF' }
+      { address: 'EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm', symbol: 'WIF' },
+      { address: '7GCihgDB8fe6KNjn2MYtkzZcRjQy3t9GHdC8uHYmW2hr', symbol: 'POPCAT' },
+      { address: 'MEW1gQWJ3nEXg2qgERiKu7FAFj79PHvQVREQUzScPP5', symbol: 'MEW' },
+      // Newer/trending
+      { address: 'HeLp6NuQkmYB4pYWo2zYs22mESHXPQYzXbB8n4V98jwC', symbol: 'AI16Z' },
+      { address: '2zMMhcVQEXDtdE6vsFS7S7D5oUodfJHE8vd1gnBouauv', symbol: 'FARTCOIN' }
     ];
 
     for (const token of defaultTokens) {

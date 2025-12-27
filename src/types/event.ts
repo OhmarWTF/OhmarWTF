@@ -12,6 +12,7 @@ export enum EventSource {
 
 export enum EventType {
   // Market events
+  PRICE_UPDATE = 'price_update',
   PRICE_CHANGE = 'price_change',
   VOLUME_SPIKE = 'volume_spike',
   LIQUIDITY_CHANGE = 'liquidity_change',

@@ -104,13 +104,6 @@ export class Orchestrator {
       enabled: config.dashboard.enabled,
       port: config.dashboard.port
     });
-
-    // Set dashboard control callbacks
-    this.dashboard.setControlCallbacks({
-      onPause: () => this.pauseTrading(),
-      onResume: () => this.resumeTrading(),
-      onSafeMode: (enabled: boolean) => this.setSafeMode(enabled)
-    });
   }
 
   /**

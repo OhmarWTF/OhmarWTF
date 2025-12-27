@@ -3,47 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ohmarwtf - Operator Dashboard</title>
+  <title>ohmarwtf - Monitor</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="container">
     <header>
-      <h1>ohmarwtf</h1>
-      <div class="status">
-        <span id="connectionStatus" class="status-badge disconnected">Disconnected</span>
-        <span id="tradingStatus" class="status-badge"></span>
-        <span id="safeModeStatus" class="status-badge"></span>
+      <div class="header-line">┌─────────────────────────────────────────────────────────────────────────────────────────┐</div>
+      <div class="header-content">
+        <span class="terminal-prompt">ohmarwtf@monitor:~$</span>
+        <span class="header-status">
+          <span id="connectionStatus" class="status-badge disconnected">●</span>
+          <span id="tradingStatus" class="status-badge"></span>
+          <span id="safeModeStatus" class="status-badge"></span>
+        </span>
       </div>
+      <div class="header-line">└─────────────────────────────────────────────────────────────────────────────────────────┘</div>
     </header>
 
     <div class="dashboard">
       <!-- Agent State -->
       <section class="card">
-        <h2>Agent State</h2>
+        <h2>╔═══ AGENT STATE ═══╗</h2>
         <div class="state-grid">
           <div class="state-item">
-            <label>Mood</label>
+            <label>MOOD</label>
             <span id="mood" class="value">-</span>
           </div>
           <div class="state-item">
-            <label>Confidence</label>
+            <label>CONFIDENCE</label>
             <span id="confidence" class="value">-</span>
           </div>
           <div class="state-item">
-            <label>Risk Appetite</label>
+            <label>RISK_APPETITE</label>
             <span id="riskAppetite" class="value">-</span>
           </div>
           <div class="state-item">
-            <label>Suspicion</label>
+            <label>SUSPICION</label>
             <span id="suspicion" class="value">-</span>
           </div>
           <div class="state-item">
-            <label>Regret</label>
+            <label>REGRET</label>
             <span id="regret" class="value">-</span>
           </div>
           <div class="state-item">
-            <label>Fatigue</label>
+            <label>FATIGUE</label>
             <span id="fatigue" class="value">-</span>
           </div>
         </div>
@@ -51,52 +55,42 @@
 
       <!-- Capital & PnL -->
       <section class="card">
-        <h2>Capital & PnL</h2>
+        <h2>╔═══ CAPITAL & PNL ═══╗</h2>
         <div class="pnl-grid">
           <div class="pnl-item">
-            <label>Current Capital</label>
+            <label>CURRENT_CAPITAL</label>
             <span id="capital" class="value large">-</span>
           </div>
           <div class="pnl-item">
-            <label>Total PnL</label>
+            <label>TOTAL_PNL</label>
             <span id="totalPnL" class="value large">-</span>
           </div>
           <div class="pnl-item">
-            <label>Daily PnL</label>
+            <label>DAILY_PNL</label>
             <span id="dailyPnL" class="value large">-</span>
           </div>
         </div>
       </section>
 
-      <!-- Controls -->
-      <section class="card">
-        <h2>Controls</h2>
-        <div class="controls">
-          <button id="pauseBtn" class="btn btn-warning">Pause Trading</button>
-          <button id="resumeBtn" class="btn btn-success" disabled>Resume Trading</button>
-          <button id="safeModeBtn" class="btn btn-danger">Toggle Safe Mode</button>
-        </div>
-      </section>
-
       <!-- Positions -->
       <section class="card full-width">
-        <h2>Open Positions</h2>
+        <h2>╔═══ OPEN POSITIONS ═══╗</h2>
         <div id="positionsContainer">
           <table id="positionsTable">
             <thead>
               <tr>
-                <th>Symbol</th>
-                <th>Direction</th>
-                <th>Entry Price</th>
-                <th>Current Price</th>
-                <th>Size</th>
-                <th>PnL</th>
-                <th>Age</th>
+                <th>SYMBOL</th>
+                <th>DIR</th>
+                <th>ENTRY</th>
+                <th>CURRENT</th>
+                <th>SIZE</th>
+                <th>PNL</th>
+                <th>AGE</th>
               </tr>
             </thead>
             <tbody id="positionsBody">
               <tr>
-                <td colspan="7" class="empty">No open positions</td>
+                <td colspan="7" class="empty">── no open positions ──</td>
               </tr>
             </tbody>
           </table>
@@ -105,22 +99,22 @@
 
       <!-- Signals -->
       <section class="card full-width">
-        <h2>Active Signals</h2>
+        <h2>╔═══ ACTIVE SIGNALS ═══╗</h2>
         <div id="signalsContainer">
           <table id="signalsTable">
             <thead>
               <tr>
-                <th>Type</th>
-                <th>Token</th>
-                <th>Confidence</th>
-                <th>Strength</th>
-                <th>Urgency</th>
-                <th>Age</th>
+                <th>TYPE</th>
+                <th>TOKEN</th>
+                <th>CONFIDENCE</th>
+                <th>STRENGTH</th>
+                <th>URGENCY</th>
+                <th>AGE</th>
               </tr>
             </thead>
             <tbody id="signalsBody">
               <tr>
-                <td colspan="6" class="empty">No active signals</td>
+                <td colspan="6" class="empty">── no active signals ──</td>
               </tr>
             </tbody>
           </table>
@@ -129,23 +123,23 @@
 
       <!-- Recent Trades -->
       <section class="card full-width">
-        <h2>Recent Trades</h2>
+        <h2>╔═══ RECENT TRADES ═══╗</h2>
         <div id="tradesContainer">
           <table id="tradesTable">
             <thead>
               <tr>
-                <th>Time</th>
-                <th>Symbol</th>
-                <th>Action</th>
-                <th>Status</th>
-                <th>Price</th>
-                <th>Size</th>
-                <th>PnL</th>
+                <th>TIME</th>
+                <th>SYMBOL</th>
+                <th>ACTION</th>
+                <th>STATUS</th>
+                <th>PRICE</th>
+                <th>SIZE</th>
+                <th>PNL</th>
               </tr>
             </thead>
             <tbody id="tradesBody">
               <tr>
-                <td colspan="7" class="empty">No recent trades</td>
+                <td colspan="7" class="empty">── no recent trades ──</td>
               </tr>
             </tbody>
           </table>
@@ -154,20 +148,20 @@
 
       <!-- Recent Events -->
       <section class="card full-width">
-        <h2>Recent Events</h2>
+        <h2>╔═══ RECENT EVENTS ═══╗</h2>
         <div id="eventsContainer">
           <div id="eventsList" class="events-list">
-            <p class="empty">No recent events</p>
+            <p class="empty">── no recent events ──</p>
           </div>
         </div>
       </section>
 
       <!-- Memory -->
       <section class="card full-width">
-        <h2>Memory</h2>
+        <h2>╔═══ MEMORY STREAM ═══╗</h2>
         <div id="memoryContainer">
           <div id="memoryList" class="memory-list">
-            <p class="empty">No memories</p>
+            <p class="empty">── no memories ──</p>
           </div>
         </div>
       </section>

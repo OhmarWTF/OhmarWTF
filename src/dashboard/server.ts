@@ -56,11 +56,6 @@ export class DashboardServer {
     tradingPaused: false
   };
 
-  // Control callbacks
-  private onPauseCallback?: () => void;
-  private onResumeCallback?: () => void;
-  private onSafeModeCallback?: (enabled: boolean) => void;
-
   constructor(config: DashboardConfig) {
     this.config = config;
     this.app = express();
@@ -116,43 +111,6 @@ export class DashboardServer {
     // Get full dashboard data
     this.app.get('/api/dashboard', (_req: Request, res: Response) => {
       res.json(this.data);
-    });
-
-    // Control: Pause trading
-    this.app.post('/api/control/pause', (_req: Request, res: Response) => {
-      if (this.onPauseCallback) {
-        this.onPauseCallback();
-        this.data.tradingPaused = true;
-        this.broadcast({ type: 'control', action: 'pause' });
-        res.json({ success: true });
-      } else {
-        res.status(500).json({ error: 'Pause callback not configured' });
-      }
-    });
-
-    // Control: Resume trading
-    this.app.post('/api/control/resume', (_req: Request, res: Response) => {
-      if (this.onResumeCallback) {
-        this.onResumeCallback();
-        this.data.tradingPaused = false;
-        this.broadcast({ type: 'control', action: 'resume' });
-        res.json({ success: true });
-      } else {
-        res.status(500).json({ error: 'Resume callback not configured' });
-      }
-    });
-
-    // Control: Toggle safe mode
-    this.app.post('/api/control/safemode', (req: Request, res: Response) => {
-      const { enabled } = req.body;
-      if (this.onSafeModeCallback) {
-        this.onSafeModeCallback(enabled);
-        this.data.safeMode = enabled;
-        this.broadcast({ type: 'control', action: 'safemode', enabled });
-        res.json({ success: true });
-      } else {
-        res.status(500).json({ error: 'Safe mode callback not configured' });
-      }
     });
   }
 
@@ -219,18 +177,5 @@ export class DashboardServer {
   updateData(updates: Partial<DashboardData>): void {
     this.data = { ...this.data, ...updates };
     this.broadcast({ type: 'update', data: this.data });
-  }
-
-  /**
-   * Set control callbacks
-   */
-  setControlCallbacks(callbacks: {
-    onPause?: () => void;
-    onResume?: () => void;
-    onSafeMode?: (enabled: boolean) => void;
-  }): void {
-    this.onPauseCallback = callbacks.onPause;
-    this.onResumeCallback = callbacks.onResume;
-    this.onSafeModeCallback = callbacks.onSafeMode;
   }
 }

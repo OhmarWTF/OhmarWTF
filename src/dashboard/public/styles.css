@@ -5,82 +5,92 @@
 }
 
 body {
-  font-family: 'Monaco', 'Courier New', monospace;
-  background: #0a0a0a;
-  color: #e0e0e0;
-  line-height: 1.6;
+  font-family: 'IBM Plex Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+  background: #000000;
+  color: #00ff00;
+  line-height: 1.4;
+  font-size: 14px;
+  overflow-x: hidden;
 }
 
 .container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 20px;
+  max-width: 100%;
+  padding: 10px;
 }
 
+/* Terminal Header */
 header {
+  margin-bottom: 20px;
+}
+
+.header-line {
+  color: #00ff00;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 0;
-  border-bottom: 2px solid #222;
-  margin-bottom: 30px;
+  padding: 5px 10px;
+  border-left: 2px solid #00ff00;
+  border-right: 2px solid #00ff00;
 }
 
-header h1 {
-  font-size: 2rem;
-  color: #00ff88;
-  letter-spacing: 2px;
+.terminal-prompt {
+  color: #00ff00;
+  font-weight: bold;
+  font-size: 16px;
 }
 
-.status {
+.header-status {
   display: flex;
   gap: 10px;
+  align-items: center;
 }
 
+/* Status Badges - Terminal style */
 .status-badge {
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 0.85rem;
+  font-size: 12px;
   font-weight: bold;
   text-transform: uppercase;
+  padding: 0 5px;
 }
 
 .status-badge.connected {
-  background: #00ff88;
-  color: #0a0a0a;
+  color: #00ff00;
 }
 
 .status-badge.disconnected {
-  background: #ff4444;
-  color: #fff;
+  color: #ff0000;
 }
 
 .status-badge.trading {
-  background: #00aaff;
-  color: #fff;
+  color: #00aaff;
 }
 
 .status-badge.paused {
-  background: #ffaa00;
-  color: #0a0a0a;
+  color: #ffaa00;
 }
 
 .status-badge.safe-mode {
-  background: #ff4444;
-  color: #fff;
+  color: #ff0000;
 }
 
+/* Dashboard Layout */
 .dashboard {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 15px;
 }
 
+/* Cards - Terminal Panels */
 .card {
-  background: #151515;
-  border: 1px solid #333;
-  border-radius: 8px;
-  padding: 20px;
+  background: #000000;
+  border: 1px solid #00ff00;
+  padding: 10px;
+  position: relative;
 }
 
 .card.full-width {
@@ -88,157 +98,145 @@ header h1 {
 }
 
 .card h2 {
-  font-size: 1.2rem;
-  color: #00ff88;
-  margin-bottom: 15px;
+  font-size: 14px;
+  color: #00ff00;
+  margin-bottom: 10px;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  font-weight: normal;
+  border-bottom: 1px solid #00ff00;
+  padding-bottom: 5px;
 }
 
+/* State Grid */
 .state-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
+  gap: 10px;
 }
 
 .state-item {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
+  justify-content: space-between;
+  padding: 5px;
+  border-left: 2px solid #00ff00;
+  padding-left: 10px;
 }
 
 .state-item label {
-  font-size: 0.75rem;
-  color: #888;
+  font-size: 12px;
+  color: #00aa00;
   text-transform: uppercase;
 }
 
 .state-item .value {
-  font-size: 1.1rem;
-  color: #fff;
+  font-size: 14px;
+  color: #00ff00;
   font-weight: bold;
 }
 
+/* PnL Grid */
 .pnl-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
+  gap: 10px;
 }
 
 .pnl-item {
   display: flex;
   flex-direction: column;
   gap: 5px;
+  border-left: 2px solid #00ff00;
+  padding-left: 10px;
 }
 
 .pnl-item label {
-  font-size: 0.75rem;
-  color: #888;
+  font-size: 11px;
+  color: #00aa00;
   text-transform: uppercase;
 }
 
 .pnl-item .value {
-  font-size: 1.1rem;
-  color: #fff;
+  font-size: 14px;
+  color: #00ff00;
   font-weight: bold;
 }
 
 .pnl-item .value.large {
-  font-size: 1.5rem;
+  font-size: 18px;
 }
 
 .pnl-item .value.positive {
-  color: #00ff88;
+  color: #00ff00;
 }
 
 .pnl-item .value.negative {
-  color: #ff4444;
+  color: #ff0000;
 }
 
-.controls {
-  display: flex;
-  gap: 10px;
-}
-
-.btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.btn:hover:not(:disabled) {
-  opacity: 0.8;
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-warning {
-  background: #ffaa00;
-  color: #0a0a0a;
-}
-
-.btn-success {
-  background: #00ff88;
-  color: #0a0a0a;
-}
-
-.btn-danger {
-  background: #ff4444;
-  color: #fff;
-}
-
+/* Tables - Terminal Style */
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
+  font-size: 12px;
+  border: 1px solid #00ff00;
 }
 
 thead {
-  background: #0a0a0a;
+  background: #001100;
+  border-bottom: 2px solid #00ff00;
 }
 
 th {
-  padding: 10px;
+  padding: 8px;
   text-align: left;
-  color: #888;
-  font-weight: normal;
+  color: #00ff00;
+  font-weight: bold;
   text-transform: uppercase;
-  font-size: 0.75rem;
-  border-bottom: 1px solid #333;
+  font-size: 11px;
+  border-right: 1px solid #003300;
+}
+
+th:last-child {
+  border-right: none;
 }
 
 td {
-  padding: 10px;
-  border-bottom: 1px solid #222;
+  padding: 8px;
+  border-bottom: 1px solid #003300;
+  border-right: 1px solid #002200;
+  color: #00cc00;
 }
 
-tr:last-child td {
-  border-bottom: none;
+td:last-child {
+  border-right: none;
 }
 
+tbody tr:hover {
+  background: #001100;
+}
+
+/* Empty State */
 .empty {
   text-align: center;
-  color: #666;
+  color: #005500;
   font-style: italic;
   padding: 20px;
+  border: none !important;
 }
 
+/* Events and Memory Lists */
 .events-list, .memory-list {
-  max-height: 300px;
+  max-height: 400px;
   overflow-y: auto;
+  border: 1px solid #00ff00;
+  padding: 5px;
 }
 
 .event-item, .memory-item {
-  padding: 10px;
-  border-bottom: 1px solid #222;
+  padding: 8px;
+  border-bottom: 1px solid #003300;
+  font-size: 12px;
 }
 
 .event-item:last-child, .memory-item:last-child {
@@ -246,74 +244,115 @@ tr:last-child td {
 }
 
 .event-time, .memory-time {
-  font-size: 0.75rem;
-  color: #888;
+  font-size: 11px;
+  color: #00aa00;
+  display: inline-block;
+  width: 80px;
 }
 
 .event-type {
   display: inline-block;
   padding: 2px 6px;
-  border-radius: 3px;
-  background: #333;
-  font-size: 0.7rem;
+  background: #001100;
+  border: 1px solid #00ff00;
+  font-size: 10px;
   margin-right: 8px;
+  color: #00ff00;
 }
 
 .signal-type {
   display: inline-block;
   padding: 4px 8px;
-  border-radius: 3px;
-  background: #00aaff;
-  color: #fff;
-  font-size: 0.75rem;
+  background: #001100;
+  border: 1px solid #00aaff;
+  color: #00aaff;
+  font-size: 11px;
   text-transform: uppercase;
 }
 
 .trade-status {
   display: inline-block;
-  padding: 4px 8px;
-  border-radius: 3px;
-  font-size: 0.75rem;
+  padding: 3px 6px;
+  font-size: 11px;
   text-transform: uppercase;
+  border: 1px solid;
 }
 
 .trade-status.filled {
-  background: #00ff88;
-  color: #0a0a0a;
+  color: #00ff00;
+  border-color: #00ff00;
 }
 
 .trade-status.failed {
-  background: #ff4444;
-  color: #fff;
+  color: #ff0000;
+  border-color: #ff0000;
 }
 
 .trade-status.pending {
-  background: #ffaa00;
-  color: #0a0a0a;
+  color: #ffaa00;
+  border-color: #ffaa00;
 }
 
 .direction-long {
-  color: #00ff88;
+  color: #00ff00;
 }
 
 .direction-short {
-  color: #ff4444;
+  color: #ff0000;
 }
 
-/* Scrollbar */
+.positive {
+  color: #00ff00 !important;
+}
+
+.negative {
+  color: #ff0000 !important;
+}
+
+/* Scrollbar - Terminal style */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a0a;
+  background: #000000;
+  border: 1px solid #003300;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 4px;
+  background: #00ff00;
+  border: 1px solid #000000;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: #00cc00;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .state-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pnl-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Terminal cursor effect on tables */
+tbody tr:before {
+  content: '›';
+  position: absolute;
+  left: 2px;
+  color: #00ff00;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+tbody tr:hover:before {
+  opacity: 1;
 }

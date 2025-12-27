@@ -42,8 +42,12 @@ export class MarketMonitor {
   private lastPrices: Map<string, TokenPrice> = new Map();
 
   // Thresholds for event generation
-  private readonly PRICE_CHANGE_THRESHOLD = 0.10; // 10% change
-  private readonly VOLUME_SPIKE_MULTIPLIER = 3; // 3x average volume
+  private readonly PRICE_CHANGE_THRESHOLD = 0.05; // 5% change (more sensitive)
+  private readonly VOLUME_SPIKE_MULTIPLIER = 2; // 2x average volume (more sensitive)
+
+  // Always generate price updates for learning
+  private lastPriceUpdate: Map<string, number> = new Map();
+  private readonly PRICE_UPDATE_INTERVAL = 60000; // Generate price update event every 60s
 
   constructor(config: MarketConfig) {
     this.config = config;
@@ -159,6 +163,35 @@ export class MarketMonitor {
 
       // Update last price
       this.lastPrices.set(address, price);
+
+      // Always generate periodic price update events for learning
+      const lastUpdate = this.lastPriceUpdate.get(address) || 0;
+      const now = Date.now();
+
+      if (now - lastUpdate >= this.PRICE_UPDATE_INTERVAL) {
+        events.push({
+          id: `price_update_${address}_${now}`,
+          timestamp: now,
+          source: EventSource.SOLANA_MARKET,
+          type: EventType.PRICE_UPDATE,
+          tokenAddress: address,
+          tokenSymbol: price.symbol,
+          data: {
+            priceUSD: price.priceUSD,
+            priceChange24h: price.priceChange24h,
+            volume24h: price.volume24h,
+            liquidity: price.liquidity
+          }
+        });
+
+        this.lastPriceUpdate.set(address, now);
+        logger.debug('Price update', {
+          symbol: price.symbol,
+          price: price.priceUSD.toFixed(6),
+          volume24h: price.volume24h.toFixed(0),
+          liquidity: price.liquidity.toFixed(0)
+        });
+      }
 
     } catch (error) {
       logger.error('Failed to poll token market data', { address, error });

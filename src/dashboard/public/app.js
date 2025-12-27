@@ -7,7 +7,6 @@ let data = null;
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
   connectWebSocket();
-  setupControls();
   setInterval(updateAges, 1000); // Update ages every second
 });
 
@@ -68,7 +67,7 @@ function updateUI() {
 
 function updateConnectionStatus(connected) {
   const badge = document.getElementById('connectionStatus');
-  badge.textContent = connected ? 'Connected' : 'Disconnected';
+  badge.textContent = connected ? '● ONLINE' : '● OFFLINE';
   badge.className = `status-badge ${connected ? 'connected' : 'disconnected'}`;
 }
 
@@ -100,7 +99,7 @@ function updatePositions() {
   const tbody = document.getElementById('positionsBody');
 
   if (data.positions.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" class="empty">No open positions</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">── no open positions ──</td></tr>';
     return;
   }
 
@@ -115,7 +114,7 @@ function updatePositions() {
         <td>${pos.entryPrice.toFixed(6)}</td>
         <td>${pos.currentPrice ? pos.currentPrice.toFixed(6) : '-'}</td>
         <td>${pos.size.toFixed(4)}</td>
-        <td class="${pnl >= 0 ? 'positive' : 'negative'}">${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)} SOL</td>
+        <td class="${pnl >= 0 ? 'positive' : 'negative'}">${pnl >= 0 ? '+' : ''}${pnl.toFixed(2)}</td>
         <td>${age}m</td>
       </tr>
     `;
@@ -126,7 +125,7 @@ function updateSignals() {
   const tbody = document.getElementById('signalsBody');
 
   if (data.signals.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" class="empty">No active signals</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">── no active signals ──</td></tr>';
     return;
   }
 
@@ -136,7 +135,7 @@ function updateSignals() {
     return `
       <tr>
         <td><span class="signal-type">${sig.type}</span></td>
-        <td>${sig.tokenSymbol}</td>
+        <td>${sig.tokenSymbol || 'undefined'}</td>
         <td>${sig.confidence.toFixed(2)}</td>
         <td>${sig.strength.toFixed(2)}</td>
         <td>${sig.urgency.toFixed(2)}</td>
@@ -150,7 +149,7 @@ function updateTrades() {
   const tbody = document.getElementById('tradesBody');
 
   if (data.recentTrades.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" class="empty">No recent trades</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">── no recent trades ──</td></tr>';
     return;
   }
 
@@ -162,7 +161,7 @@ function updateTrades() {
       <tr>
         <td>${time}</td>
         <td>${trade.tokenSymbol}</td>
-        <td>${trade.direction.toUpperCase()}</td>
+        <td class="direction-${trade.direction}">${trade.direction.toUpperCase()}</td>
         <td><span class="trade-status ${trade.status}">${trade.status}</span></td>
         <td>${trade.fillPrice ? trade.fillPrice.toFixed(6) : '-'}</td>
         <td>${trade.filledSize ? trade.filledSize.toFixed(4) : '-'}</td>
@@ -176,7 +175,7 @@ function updateEvents() {
   const container = document.getElementById('eventsList');
 
   if (data.recentEvents.length === 0) {
-    container.innerHTML = '<p class="empty">No recent events</p>';
+    container.innerHTML = '<p class="empty">── no recent events ──</p>';
     return;
   }
 
@@ -185,12 +184,10 @@ function updateEvents() {
 
     return `
       <div class="event-item">
-        <div class="event-time">${time}</div>
-        <div>
-          <span class="event-type">${event.type}</span>
-          ${event.tokenSymbol || ''} - ${event.source}
-          ${event.data && event.data.value ? `: ${JSON.stringify(event.data.value)}` : ''}
-        </div>
+        <span class="event-time">${time}</span>
+        <span class="event-type">${event.type}</span>
+        ${event.tokenSymbol ? event.tokenSymbol + ' - ' : ''}${event.source}
+        ${event.data && event.data.value ? ': ' + JSON.stringify(event.data.value) : ''}
       </div>
     `;
   }).join('');
@@ -200,7 +197,7 @@ function updateMemories() {
   const container = document.getElementById('memoryList');
 
   if (data.recentMemories.length === 0) {
-    container.innerHTML = '<p class="empty">No memories</p>';
+    container.innerHTML = '<p class="empty">── no memories ──</p>';
     return;
   }
 
@@ -209,12 +206,10 @@ function updateMemories() {
 
     return `
       <div class="memory-item">
-        <div class="memory-time">${time}</div>
-        <div>
-          <strong>${mem.type}</strong>: ${mem.summary}
-          ${mem.outcome ? ` (${mem.outcome})` : ''}
-          ${mem.importance ? ` [importance: ${mem.importance.toFixed(2)}]` : ''}
-        </div>
+        <span class="memory-time">${time}</span>
+        [${mem.type}] ${mem.summary}
+        ${mem.outcome ? ' → ' + mem.outcome : ''}
+        ${mem.importance ? ' (' + mem.importance.toFixed(2) + ')' : ''}
       </div>
     `;
   }).join('');
@@ -224,51 +219,18 @@ function updateStatusBadges() {
   const tradingStatus = document.getElementById('tradingStatus');
   const safeModeStatus = document.getElementById('safeModeStatus');
 
-  tradingStatus.textContent = data.tradingPaused ? 'Paused' : 'Trading';
+  tradingStatus.textContent = data.tradingPaused ? '[PAUSED]' : '[ACTIVE]';
   tradingStatus.className = `status-badge ${data.tradingPaused ? 'paused' : 'trading'}`;
 
   if (data.safeMode) {
-    safeModeStatus.textContent = 'Safe Mode';
+    safeModeStatus.textContent = '[SAFE_MODE]';
     safeModeStatus.className = 'status-badge safe-mode';
-    safeModeStatus.style.display = 'block';
+    safeModeStatus.style.display = 'inline';
   } else {
     safeModeStatus.style.display = 'none';
   }
-
-  // Update button states
-  document.getElementById('pauseBtn').disabled = data.tradingPaused;
-  document.getElementById('resumeBtn').disabled = !data.tradingPaused;
 }
 
 function updateAges() {
   // Ages update automatically on next full update
-}
-
-// Controls
-function setupControls() {
-  document.getElementById('pauseBtn').addEventListener('click', () => {
-    fetch('/api/control/pause', { method: 'POST' })
-      .then(res => res.json())
-      .then(result => console.log('Pause result:', result))
-      .catch(err => console.error('Pause error:', err));
-  });
-
-  document.getElementById('resumeBtn').addEventListener('click', () => {
-    fetch('/api/control/resume', { method: 'POST' })
-      .then(res => res.json())
-      .then(result => console.log('Resume result:', result))
-      .catch(err => console.error('Resume error:', err));
-  });
-
-  document.getElementById('safeModeBtn').addEventListener('click', () => {
-    const newState = !data.safeMode;
-    fetch('/api/control/safemode', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ enabled: newState })
-    })
-      .then(res => res.json())
-      .then(result => console.log('Safe mode result:', result))
-      .catch(err => console.error('Safe mode error:', err));
-  });
 }
