@@ -192,8 +192,8 @@ export class DashboardServer {
     }
 
     return new Promise((resolve) => {
-      this.server.listen(this.config.port, () => {
-        logger.info(`Dashboard server running on http://localhost:${this.config.port}`);
+      this.server.listen(this.config.port, '0.0.0.0', () => {
+        logger.info(`Dashboard server running on port ${this.config.port} (accessible on all interfaces)`);
         resolve();
       });
     });
